@@ -1,13 +1,17 @@
-import { baseUrl } from "../consts/appSettings";
+import { baseUrl } from "../../consts/appSettings";
 
-describe("New user registration", () => {
+describe("Registration page", () => {
+  let users;
   beforeEach(() => {
+    cy.fixture("users").then((data) => {
+      users = data;
+    });
     cy.visit(`${baseUrl}/cadastrarusuarios`);
     cy.wait(1000);
   });
 
-  it("Should create a new adm user with success", () => {
-    const randomUser = Date.now();
+  it("Should successfully create a new admin user", () => {
+    const randomUser = Math.floor(Date.now() / 1000);
     const randomEmail = `user.${randomUser}@mail.com`;
 
     cy.get('[data-testid="nome"]').type("John Doe");
@@ -20,10 +24,10 @@ describe("New user registration", () => {
     cy.screenshot();
   });
 
-  it("Should display an error when user already exists", () => {
-    cy.get('[data-testid="nome"]').type("test0007");
-    cy.get('[data-testid="email"]').type("test0007@qa.com");
-    cy.get('[data-testid="password"]').type("test0007");
+  it("Should display an error when the user already exists", () => {
+    cy.get('[data-testid="nome"]').type(users.existingUser.nome);
+    cy.get('[data-testid="email"]').type(users.existingUser.email);
+    cy.get('[data-testid="password"]').type(users.existingUser.password);
     cy.get('[data-testid="checkbox"]').check();
     cy.get('[data-testid="cadastrar"]').click();
 
